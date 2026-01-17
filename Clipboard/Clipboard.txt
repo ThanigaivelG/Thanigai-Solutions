@@ -1,0 +1,58 @@
+select empno, ename, job, null copy from emp
+====
+
+
+<button type="button" 
+        title="copy to clipboard" 
+        aria-label="copy to clipboard" 
+        data-file-url="#ENAME#"
+        class="cc-copy-btn t-Button t-Button--noLabel t-Button--icon t-Button--noUI">
+        <span aria-hidden="true" class="t-Icon fa fa-clone"></span>
+</button>
+
+
+
+
+================
+jquery Selector
+
+.cc-copy-btn
+
+
+let copiedText = $(this.triggeringElement).data('fileUrl');
+navigator.clipboard.writeText(copiedText);
+
+apex.message.showPageSuccess('Name Copied to Clipboard!');
+
+
+
+
+======================
+
+
+document.getElementById('btn-read-clipboard').addEventListener('click', function () {
+  navigator.clipboard.readText().then(function(data) {   
+    apex.item('P21_CLIPBOARD_TXT').setValue(data);
+  })
+});
+
+
+
+===============================
+
+
+
+<a class="a-Button btn-clipboard  a-Button--popupLOV" 
+id = "btn-read-clipboard"
+aria-label="Read From Clipboard" 
+title="Read From Clipboard"
+href="javascript:void(0);">
+<span class="fa fa-light fa-clipboard"></span>
+</a>
+ 
+===============
+
+
+ 
+
+

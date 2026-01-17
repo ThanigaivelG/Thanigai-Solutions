@@ -1,0 +1,24 @@
+---CREATING MLE MODULES JAVASCRIPT--
+
+export function mle_js() {
+  return "Hello Team from JavaScript Stored Procedure!";
+};
+
+===================================================================
+
+---CREATING FUNCTION TO CALL THE JS ----
+
+create or replace function mle_js_func return varchar2 as  
+ MLE Module MLE_JS_MOD signature 'mle_js';
+
+
+===================================================================
+
+---CREATING PROCEDURE TO CALL THE JS ----
+
+create or replace procedure mle_js_proc (v_out out varchar2) is  
+begin
+  v_out := mle_js_func();   
+end;
+
+===================================================================

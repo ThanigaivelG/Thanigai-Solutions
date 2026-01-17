@@ -1,0 +1,44 @@
+ 
+apex.server.process('Image',{
+        dataType: 'text',
+        async:false,         
+        pageItems: "#P49_NEW"  
+      },{
+          success: function(empData) {            
+            let data = empData['output'][0] 
+            $("#FILE_PREVIEW").attr('src', 'data:'+ data['mime_type'] +';base64,' + data['Image'])   
+        },
+        error :function (err){
+          console.log(err)
+        }
+})
+
+=======================================================================
+
+declare   
+  cursor employee_img is 
+     select ATTACHMENT_NAME, MIME_TYPE, ATTACHMENT from ATTACHMENTs
+                     where id = :P49_NEW; 
+ v_attachment_name varchar2(200);
+ v_attachment blob;
+ v_mime_type varchar2(100); 
+                    
+begin
+   
+apex_json.open_object;
+ 
+  apex_json.open_array('output');  
+   for img in employee_img loop    
+    apex_json.open_object;
+      apex_json.write('Image', img.ATTACHMENT); 
+      apex_json.write('mime_type', img.MIME_TYPE);  
+      
+    apex_json.close_object;  
+   end loop;     
+   apex_json.close_array;
+ apex_json.close_object;  
+end;  
+
+=======================================================================
+
+ 

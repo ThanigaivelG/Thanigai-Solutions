@@ -1,0 +1,36 @@
+Dynamic Action
+==============
+
+Execute Javascript Code
+-----------------------
+
+var fileInput = document.getElementById("P44_FILE"); // Replace P1_FILE_ITEM with your item name
+var file = fileInput.files[0];
+ 
+ 
+if (file) {      
+  getURL(this.triggeringElement,"new-file")     
+} 
+  
+===========================================================================================================
+
+Function and Global Declartion
+------------------------------
+
+function getURL(input,iframSrc) {     
+  if (input.files && input.files[0]){
+    var reader=new FileReader();
+    reader.onload = function(e){
+      $('#'+iframSrc).attr('src',e.target.result);
+    };
+    reader.readAsDataURL(input.files[0]);
+  }
+}
+
+===========================================================================================================
+
+Preview Region (Static Content)
+
+<iframe id="new-file" class="iframe-style" style="width:100%;height:500px;"></iframe>
+
+===========================================================================================================

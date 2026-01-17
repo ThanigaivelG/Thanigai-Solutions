@@ -1,0 +1,27 @@
+DECLARE
+   l_id NUMBER;
+   v_blob blob;
+BEGIN
+   -- Step 1: Create the email
+   l_id := APEX_MAIL.SEND(
+      p_to        => 'yicirar886@gamintor.com',
+      p_from      => 'admin@yourdomain.com',
+      p_subj      => 'Monthly Report',
+      p_body      => 'Please find the report attached.',
+      p_body_html => '<p>Please find the <b>report</b> attached.</p>'
+   );
+
+    select attachment into v_blob from attachments where id = 61;
+
+   -- Step 2: Add attachment (from a BLOB column)
+   APEX_MAIL.ADD_ATTACHMENT(
+      p_mail_id    => l_id,
+      p_attachment => v_blob,
+      p_filename   => 'Report.pdf',
+      p_mime_type  => 'application/pdf'
+   );
+
+   -- Step 3: Push the queue to send immediately
+   APEX_MAIL.PUSH_QUEUE;
+END;
+

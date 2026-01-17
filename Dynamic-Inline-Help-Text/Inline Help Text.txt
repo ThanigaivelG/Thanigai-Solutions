@@ -1,0 +1,36 @@
+
+function attachInlineHelpTxt(targetNode,helpText){  
+  if(!document.getElementById(targetNode +"_inline_help")){   
+      
+      const inlineHelp = document.createElement("span");
+      inlineHelp.className = "t-Form-inlineHelp";
+      inlineHelp.innerHTML = '<span id='+ targetNode +'_inline_help></span>';
+ 
+      const errorPlaceholder = document.getElementById(targetNode + "_error_placeholder"); 
+      if (errorPlaceholder) {
+        errorPlaceholder.parentNode.insertBefore(inlineHelp, errorPlaceholder); 
+      }        
+  } 
+  document.getElementById(targetNode +"_inline_help").innerHTML = helpText 
+}
+
+
+==========================================
+
+var input = apex.item("P22_TEXT_1").getValue()
+
+if(input == ""){
+  attachInlineHelpTxt("P22_TEXT_1","")   
+}
+else if (input <= 0 ){
+  attachInlineHelpTxt("P22_TEXT_1","<span style='color:red;font-weight:bold;'>Number Should be > 0</span>")       
+}
+else if(input > 0 && input < 1000){
+    attachInlineHelpTxt("P22_TEXT_1","You Entered : <span>" + apex.item("P22_TEXT_1").getValue() + "</span>")       
+}
+else if(input >= 1000){
+    attachInlineHelpTxt("P22_TEXT_1","You Entered : <span style='color:red;font-weight:bold;'>" + apex.item("P22_TEXT_1").getValue() + "</span>")       
+}else{
+  attachInlineHelpTxt("P22_TEXT_1","<span style='color:red;font-weight:bold;'>Invalid Number</span>")            
+}
+

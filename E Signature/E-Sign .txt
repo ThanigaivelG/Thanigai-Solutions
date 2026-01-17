@@ -1,0 +1,100 @@
+-- Header Text
+<script src="https://cdn.jsdelivr.net/npm/signature_pad@4.0.0/dist/signature_pad.umd.min.js"></script>
+/
+
+-- Execute when Page Loads
+// setup canvas
+var canvas = document.getElementById('sig-canvas');
+
+function resizeCanvas(){
+  var ratio = Math.max(window.devicePixelRatio || 1, 1);
+  canvas.width = canvas.offsetWidth * ratio;
+  canvas.height = canvas.offsetHeight * ratio;
+  canvas.getContext("2d").scale(ratio, ratio);
+}
+resizeCanvas();
+window.addEventListener('resize', resizeCanvas);
+
+// initialize signaturePad
+window.signaturePad = new SignaturePad(canvas, {
+  backgroundColor: 'rgba(255,255,255,1)',
+  penColor: 'black'
+});
+
+// clear button
+document.getElementById('btn-clear').addEventListener('click', function(){
+  signaturePad.clear();
+});
+
+// save button
+document.getElementById('btn-save').addEventListener('click', function(){
+  if (signaturePad.isEmpty()) { 
+    apex.message.alert('Please sign first'); 
+    return; 
+  }
+  var dataURL = signaturePad.toDataURL('image/png');
+  var base64 = dataURL.replace(/^data:[^;]+;base64,/, '');
+
+  apex.server.process('SAVE_SIGNATURE', { p_clob_01: base64 }, {
+    dataType: 'json',
+    success: function(pData){
+      if (pData && pData.status === 'OK') {
+        apex.message.showPageSuccess('Signature saved (ID: ' + pData.id + ')');
+      } else {
+        apex.message.alert('Save failed: ' + (pData.message || 'unknown'));
+      }
+    },
+    error: function(jqXHR, textStatus, errorThrown){
+      console.error('AJAX error', textStatus, errorThrown, 'Response:', jqXHR.responseText);
+      apex.message.alert('AJAX error — check browser console for details');
+    }
+  });
+});
+/
+
+-- Ajax callback (SAVE_SIGNATURE)
+DECLARE
+  l_clob  CLOB := apex_application.g_clob_01;
+  l_blob  BLOB;
+  l_id    NUMBER;
+BEGIN
+  -- strip base64 prefix
+  l_clob := regexp_replace(nvl(l_clob,''), '^\s*data:[^;]+;base64,', '');
+
+  -- convert base64 → BLOB
+  l_blob := apex_web_service.clobbase642blob(l_clob);
+
+  INSERT INTO user_signatures (app_user, signed_on, mime_type, file_name, image_blob)
+  VALUES (:APP_USER, SYSTIMESTAMP, 'image/png', 'signature.png', l_blob)
+  RETURNING id INTO l_id;
+
+  COMMIT;
+
+  owa_util.mime_header('application/json', FALSE);
+  htp.p('Cache-Control: no-cache');
+  owa_util.http_header_close;
+
+  apex_json.open_object;
+  apex_json.write('status','OK');
+  apex_json.write('id', l_id);
+  apex_json.close_object;
+
+EXCEPTION
+  WHEN OTHERS THEN
+    owa_util.mime_header('application/json', FALSE);
+    htp.p('Cache-Control: no-cache');
+    owa_util.http_header_close;
+
+    apex_json.open_object;
+    apex_json.write('status','ERROR');
+    apex_json.write('message', substr(sqlerrm,1,4000));
+    apex_json.close_object;
+END;
+/
+-- static region (HTML Code) 
+
+<div id="signature-pad" style="border:1px solid #ccc; width:400px; height:200px;">
+  <canvas id="sig-canvas" style="width:100%; height:100%;"></canvas>
+</div>
+<button type="button" id="btn-clear" class="t-Button">Clear</button>
+<button type="button" id="btn-save" class="t-Button t-Button--hot">Save</button>

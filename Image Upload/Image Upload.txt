@@ -1,0 +1,38 @@
+Image Upload Concept
+===================
+
+Attachments Table (DDL)
+-----------------------
+
+create table attachments(
+   id number generated always as identity,   
+   attachment_name varchar2(45),
+   mime_type varchar2(30),
+   attachment blob
+);
+
+============================================================
+ 
+After Submit Process
+---------------------
+
+  declare    
+    v_cnt number := 0;    
+  begin
+     for l_file in (select *  from apex_application_temp_files) loop          
+     
+       insert into attachments(attachment_name, mime_type, attachment)
+         values (l_file.filename,l_file.mime_type,l_file.blob_content); 
+      
+      v_cnt := v_cnt + 1;
+      exit;
+       
+     end loop;
+    
+   if v_cnt <= 0 then
+     raise_application_error(-20001,'Plz, Upload any image....');
+   end if;  
+  end;
+
+============================================================
+ 

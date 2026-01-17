@@ -1,0 +1,64 @@
+SELECT * FROM product_component_version;
+======================================================
+ 
+--- IF NOT Exists IN THE DDL STATEMENT ----
+
+create table if not exists temp_tbl(
+    employee number
+)
+
+==========================================================================
+
+----TABLE SUPPORTS BOOLEAN COLUMN (TRUE/FALSE)----
+
+create table temp_tbl (
+    employee_id number,
+    name varchar2(60),
+    desig varchar2(80),
+    salary number ,    
+    dept number
+)
+
+==========================================================================
+
+---MULTIPLE VALUES CAN BE INSERTED USING INSERT STATEMENTS----
+
+insert into temp_tbl values (111, 'John','Senior Engineer',45000,1),
+                            (112, 'Alex','Cloud Engineer',65000,1),
+                            (113, 'Charles','UI/UX',35000,2) 
+   
+==========================================================================
+
+--- USING BOOLEAN DATATYPE ----
+
+alter table temp_tbl modify active_flag boolean
+
+update temp_tbl set active_flag = 'Y';
+
+declare
+  v_bool boolean;
+begin
+  select active_flag into v_bool from temp_tbl where employee_id = 111;
+   
+  if not v_bool then
+    DBMS_OUTPUT.PUT_LINE('hello');
+  else
+    DBMS_OUTPUT.PUT_LINE('Fail');
+  end if; 
+end;   
+
+ 
+==========================================================================
+
+ALTER SESSION SET group_by_position_enabled = TRUE;
+
+select dept, avg(salary)
+  from temp_tbl
+group by 1  
+ 
+
+select dept as department, avg(salary)
+  from temp_tbl
+group by department
+
+

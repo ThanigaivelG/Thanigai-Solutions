@@ -1,0 +1,52 @@
+<div id="quickPickContainer"></div>
+
+
+============
+
+
+DECLARE
+  l_json CLOB;
+  cursor c is 
+   SELECT '5%' AS label, '5' AS value FROM DUAL
+    UNION ALL
+    SELECT '10%' as label, '10' as value FROM DUAL
+      UNION ALL
+    SELECT '15%' as label, '15' as value FROM DUAL 
+     UNION ALL
+    SELECT '25%' as label, '25' as value FROM DUAL;  
+BEGIN
+apex_json.open_object;
+  apex_json.open_array('output');  
+   for quickPicks in c loop    
+    apex_json.open_object;
+      apex_json.write('label', quickPicks.label);  
+      apex_json.write('value', quickPicks.value); 
+    apex_json.close_object;  
+   end loop;     
+   apex_json.close_array;
+ apex_json.close_object;  
+end;
+
+==================
+
+
+var container = $("#quickPickContainer");
+
+ apex.server.process("QuickPicks",{
+     dataType: 'text',
+     async:false,     
+  },{
+     success: function(pData) {
+      let val = pData['output'] 
+
+      val.map((item,index) => {        
+        let picks = (index < (val.length - 1)) ? item.label + ", " : item.label        
+        let link = $("<a>").text(picks).attr("href", "#").attr("title", item.label).addClass("quick-pick");
+        link.on("click", function() {
+          apex.item("P25_INPUT").setFocus()    
+          $("#P25_INPUT").val(item.value);                
+        });
+        container.append(link);
+      })
+     }
+  });  
