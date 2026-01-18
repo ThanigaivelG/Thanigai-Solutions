@@ -1,0 +1,66 @@
+Branch 
+------
+
+Page : 0
+APPLICATION_PROCESS=BULK DOWNLOAD
+
+===========================================================
+
+Execute Server side (Button without page submit)
+---------------------------------------------------
+
+select APEX_PAGE.GET_URL (
+                p_page   => 0, 
+                p_request => 'APPLICATION_PROCESS=BULK DOWNLOAD' )
+         into  :P58_URL 
+from dual;
+
+===========================================================
+
+Execue Javascript code (Button without page submit)
+----------------------------------------------------
+
+location.href = apex.item("P58_URL").getValue()
+apex.message.showPageSuccess("Downloaded")
+
+===========================================================
+
+Application Process (Ajax Callback)
+-----------------------------------
+
+DECLARE
+    l_zip_blob BLOB;
+BEGIN
+    -- Create temporary ZIP BLOB
+    DBMS_LOB.CREATETEMPORARY(l_zip_blob, TRUE);
+
+    -- Add files to ZIP
+    FOR r IN (
+        SELECT attachment_name, attachment
+        FROM attachments
+        WHERE id IN (3, 61)
+        ORDER BY id
+    ) LOOP
+        APEX_ZIP.ADD_FILE(
+            p_zipped_blob => l_zip_blob,
+            p_file_name   => r.attachment_name,
+            p_content     => r.attachment
+        );
+    END LOOP;
+
+    -- IMPORTANT: finalize ZIP
+    APEX_ZIP.FINISH(l_zip_blob);
+
+    -- Send ZIP to browser
+    OWA_UTIL.mime_header('application/zip', FALSE);
+    HTP.p('Content-Length: ' || DBMS_LOB.getlength(l_zip_blob));
+    HTP.p('Content-Disposition: attachment; filename="files.zip"');
+    OWA_UTIL.http_header_close;
+
+    WPG_DOCLOAD.download_file(l_zip_blob);
+
+    -- Stop APEX engine
+    APEX_APPLICATION.stop_apex_engine;
+END;
+
+===========================================================
