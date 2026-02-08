@@ -1,0 +1,83 @@
+
+Excel Parser Process
+--------------------
+
+declare
+  v_rownum number := 0;
+  v_err_msg clob;
+  v_tbl_name varchar2(25) := 'EMP_DATA';
+begin   
+
+    if :P61_EXCEL_UPLOAD is null then
+       raise_application_error(-20001,'Please Select any file to upload....');
+    end if;
+ 
+    if not apex_collection.collection_exists(v_tbl_name) then
+        apex_collection.create_collection(v_tbl_name);
+     end if;
+  
+     if apex_collection.collection_exists(v_tbl_name) then
+        apex_collection.truncate_collection(v_tbl_name);
+     end if; 
+  
+     for r1 in (select * from
+                    apex_application_temp_files f, table( apex_data_parser.parse(
+                                    p_content                     => f.blob_content,
+                                    p_add_headers_row             => 'Y',
+                                    p_file_name                   => f.filename,
+                                    p_skip_rows => 1 ) ) p    
+                    where f.name = :P61_EXCEL_UPLOAD  --Page Item name
+                    )
+        loop   
+        
+        v_rownum := v_rownum + 1;
+
+        if r1.col001 is null then
+          v_err_msg := v_err_msg || '<br/>Employee Number is null at row : ' || v_rownum;
+        end if;          
+        
+        if r1.col002 is null then
+          v_err_msg := v_err_msg || '<br/>Employee Name is null at row : ' || v_rownum ;
+        end if;
+        
+        if r1.col003 is null then
+          v_err_msg := v_err_msg || '<br/>Employee Designation is null at row : ' || v_rownum ;
+        end if; 
+
+         APEX_COLLECTION.add_member (
+            p_collection_name => v_tbl_name,       
+            p_c001 => r1.col001,
+            p_c002 => r1.col002,
+            p_c003 => r1.col003
+        );  
+
+        END LOOP;   
+
+        if v_err_msg is not null then
+          raise_application_error(-20001,v_err_msg);
+        end if;
+  end;      
+       
+==================================================================================================================
+
+Save Process
+------------
+ 
+insert into EXCEL_UPLOAD 
+    select c001, c002, c003 
+      from apex_collections
+    where collection_name = 'EMP_DATA';
+
+
+==================================================================================================================
+
+Excel Preview (Classic Report)
+------------------------------
+
+select c001 employee_number,
+       c002 employee_name,
+       c003 employee_designation
+   from apex_collections
+ where collection_name = 'EMP_DATA'
+
+
