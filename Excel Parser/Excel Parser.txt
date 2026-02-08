@@ -1,0 +1,19 @@
+begin   
+  
+     for r1 in (select * from
+                    apex_application_temp_files f, table( apex_data_parser.parse(
+                                    p_content                     => f.blob_content,
+                                    p_add_headers_row             => 'Y',
+                                    p_file_name                   => f.filename,
+                                    p_skip_rows => 1 ) ) p    
+                    where f.name = :P4_MASS_NOMINATION  --Page Item name
+                    )
+        loop 
+  
+            --- Inserting into the Table   
+          
+           insert into EXCEL_UPLOAD values (r1.col001,r1.col002,r1.col003);
+ 
+        END LOOP;   
+  end;      
+       
