@@ -1,0 +1,16 @@
+Interactive Grid Select All the Records by clicking the select-all check box
+============================================================================
+
+function(options) {
+
+ options.defaultGridViewOptions = {
+     persistSelection: true
+  };
+
+  options.modelOptions = {
+     pageSize: 10000, 
+     fetchAllData: true 
+  };
+
+  return options;
+ }
