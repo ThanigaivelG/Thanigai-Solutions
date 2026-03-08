@@ -17,8 +17,11 @@ function(options) {
 
 ------------------------------------------------------------------------------------------------------
 
-var records = apex.region("RG_GRID").widget().interactiveGrid("getViews","grid").getSelectedRecords() 
+// STATIC ID -> Report Static ID
+
+var records = apex.region("STATIC ID").widget().interactiveGrid("getViews","grid").getSelectedRecords() 
 
 console.log(records)
 
 ------------------------------------------------------------------------------------------------------
+
