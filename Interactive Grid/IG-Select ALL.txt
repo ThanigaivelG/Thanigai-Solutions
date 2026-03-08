@@ -1,5 +1,4 @@
-Interactive Grid Select All the Records by clicking the select-all check box
-============================================================================
+--------- Interactive Grid -> Select All Records --------- 
 
 function(options) {
 
@@ -13,4 +12,13 @@ function(options) {
   };
 
   return options;
+
  }
+
+------------------------------------------------------------------------------------------------------
+
+var records = apex.region("RG_GRID").widget().interactiveGrid("getViews","grid").getSelectedRecords() 
+
+console.log(records)
+
+------------------------------------------------------------------------------------------------------
