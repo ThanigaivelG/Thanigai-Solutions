@@ -1,0 +1,73 @@
+Function and Global Variable Declaration
+-----------------------------------------
+
+function getColumnIndex(regionStaticId,columnStaticId){
+   var $region = $("#" + regionStaticId);
+   var $table  = $region.find(".a-IRR-table"); 
+
+   if ($table.length === 0) return;
+  
+    if(columnStaticId.length > 0){
+        var $th = $table.find("th#" + columnStaticId);
+
+          if ($th.length === 0) {
+            console.log("Column not found: " + columnStaticId);
+            return;
+          }
+
+        return $th.closest("tr").children("th").index($th) + 1;        
+    } 
+}
+
+function freezeIR(column){
+    
+    const colWidths = [];  // RG_EMP => Static ID
+
+    const numCols = getColumnIndex("RG_EMP",column)       
+
+    // Collecting column widths
+    for (let i = 1; i <= numCols; i++) {
+        colWidths[i] = $(`#RG_EMP .a-IRR-table tr th:nth-child(${i})`).width();
+    }  
+
+    // Reset all columns first
+    $(`#RG_EMP .a-IRR-table tr th,
+       #RG_EMP .a-IRR-table tr td`).css({
+        "position": "relative",
+        "left": "",
+        "z-index": "",
+        "background": ""
+    });
+
+    $(`#RG_EMP .a-IRR-table th`).each(function(index) {
+        console.log(index + 1, $(this).attr("id"));
+    });
+
+    // Setting styles
+    for (let i = 1; i <= numCols; i++) {
+        let leftOffset = 0;
+        for (let j = 1; j < i; j++) {
+            leftOffset += colWidths[j];
+        } 
+ 
+        $(`#RG_EMP .a-IRR-table tr th:nth-child(${i}), 
+           #RG_EMP .a-IRR-table tr td:nth-child(${i})`).css({
+                                                    "position": "sticky",
+                                                    "left": leftOffset + "px",
+                                                    "background": "white",
+                                                    "z-index": "3"
+                                                 });      
+         
+    }
+    
+}  
+ 
+===================================================================================================
+
+Execute when page loads
+-----------------------
+
+freezeIR(PAGE_ITEM_VALUE) // pass the page item value 
+
+
+===================================================================================================
