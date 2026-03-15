@@ -1,0 +1,19 @@
+Javascript -> File URLS
+-----------------------
+
+#IMAGE_PREFIX#libraries/apex/#MIN_DIRECTORY#widget.stickyTableHeader#MIN#.js?v=#APEX_VERSION#
+
+===================================================================================================
+
+After Refresh Dyanamic Action (Enable Fire on Initialization)
+-----------------------------
+
+var reg = $("#RG_EMP"); //Static ID of Classic Report
+
+reg.setTableHeadersAsFixed();
+reg.find('.js-stickyTableHeader').stickyWidget({    
+    toggleWidth: true
+});
+
+===================================================================================================
+
