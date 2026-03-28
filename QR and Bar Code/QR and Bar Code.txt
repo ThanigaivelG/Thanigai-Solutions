@@ -1,0 +1,36 @@
+QR / Bar Code 
+-------------
+
+  select
+    '<img src="data:image/png;base64,' ||
+    apex_web_service.blob2clobbase64(
+         apex_barcode.get_qrcode_png(
+            p_value => 'Thanigaivel G',
+            p_scale => 6,
+            p_quiet => 5,
+            p_foreground_color => '#000000',
+            p_background_color => '#ffffff'
+        )
+    ) || '" width="150"/>' AS get_qrcode_png ,
+
+     '<img src="data:image/png;base64,' ||
+    apex_web_service.blob2clobbase64(
+        apex_barcode.get_code128_png(
+            p_value => 10111245, p_scale => 1,
+            p_foreground_color => '#000000',
+            p_background_color => '#ffffff'
+        )
+    ) || '" width="150"/>' AS get_code128_png ,
+
+
+     '<img src="data:image/png;base64,' ||
+    apex_web_service.blob2clobbase64(
+         apex_barcode.get_ean8_png(
+            p_value => '12345678',
+            p_scale => 3,
+            p_foreground_color => '#000000',
+            p_background_color => '#ffffff'
+        ) 
+    ) || '" width="150"/>' AS get_ean8_png   
+
+ from dual;
