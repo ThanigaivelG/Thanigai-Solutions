@@ -1,0 +1,15 @@
+FreeSQL
+-------
+
+<iframe allowfullscreen="true" 
+        frameborder="0" 
+        height="460px" 
+        id="live-sql-embedded" 
+        name="FreeSQL Embedded Playground" 
+        scrolling="no" 
+        src="https://freesql.com/embedded/?layout=vertical&amp;compressed_code=H4sIAAAAAAAAEytOzUlNLlHQUkgrys9VyCjSS80tyMmvTE0t1tV19XcGAPXvDIAfAAAA&amp;code_language=PL_SQL&amp;code_format=false" 
+        style="border-radius: 12px; border: 1px solid #e0e0e0; overflow: hidden; width: 100%;" 
+        title="FreeSQL" 
+        width="100%"> 
+   FreeSQL Embedded Playground
+</iframe>
