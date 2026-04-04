@@ -1,0 +1,18 @@
+Tree Region
+-----------
+
+  SELECT
+    LEVEL,
+    EMPNO AS ID,
+    ename AS NAME,
+    mgr AS PARENT_ID,
+    'icon-tree-folder' as icon
+    FROM
+    EMP 
+    START WITH
+    mgr IS NULL
+    CONNECT BY
+    PRIOR empno = mgr
+    ORDER SIBLINGS BY
+    ename
+     

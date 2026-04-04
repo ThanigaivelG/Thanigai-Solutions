@@ -1,0 +1,76 @@
+WITH tree_data AS (
+    SELECT 1 AS id, 'Documents' AS name, NULL AS parent_id, 'FOLDER' AS type FROM dual
+    UNION ALL
+    SELECT 2, 'Reports', 1, 'FOLDER' FROM dual
+    UNION ALL
+    SELECT 3, 'Sales Report.pdf', 2, 'PDF' FROM dual
+    UNION ALL
+    SELECT 4, 'Budget.xlsx', 2, 'EXCEL' FROM dual
+    UNION ALL
+    SELECT 5, 'HR.docx', 2, 'WORD' FROM dual
+    UNION ALL
+    SELECT 6, 'Images', 1, 'FOLDER' FROM dual
+    UNION ALL
+    SELECT 7, 'Logo.png', 6, 'IMAGE' FROM dual
+    UNION ALL
+    SELECT 8, 'Notes.txt', 1, 'TEXT' FROM dual
+)
+
+SELECT
+    LEVEL,
+    id,
+    name,
+    parent_id,
+    type as fileType,
+    CASE type
+        WHEN 'FOLDER' THEN 'fa fa-folder folder-icon'
+        WHEN 'PDF'    THEN 'fa fa-file-pdf-o pdf-icon'
+        WHEN 'EXCEL'  THEN 'fa fa-file-excel-o excel-icon'
+        WHEN 'WORD'   THEN 'fa fa-file-word-o doc-icon'
+        WHEN 'IMAGE'  THEN 'fa fa-image  img-icon'
+        WHEN 'TEXT'   THEN 'fa fa-file-text file-icon'
+        ELSE 'fa fa-file'
+    END AS icon
+FROM tree_data
+START WITH parent_id IS NULL
+CONNECT BY PRIOR id = parent_id
+ORDER SIBLINGS BY name;
+
+
+======================================================================
+
+css
+---
+
+.a-TreeView-row.is-selected {     
+    background-color: dimgray;
+}
+  
+.a-TreeView-content.is-selected .a-Icon:not(.folder-icon){
+    color: #fff !important;
+}
+
+.folder-icon{
+    color: orange!important;
+}
+
+.pdf-icon{
+    color: red!important;
+}
+
+.excel-icon{
+    color: green!important;
+}
+
+.doc-icon{
+    color: blue!important;
+}
+
+.img-icon{
+    color: black!important;
+} 
+
+.file-icon{
+    color: #6565d6!important;
+}  
+
