@@ -1,0 +1,19 @@
+Custom Error Handling Function (Replace ORA error code from the error message)
+------------------------------
+
+create or replace FUNCTION custom_error_hander_f (
+    p_error IN apex_error.t_error
+)
+RETURN apex_error.t_error_result
+IS
+    l_result apex_error.t_error_result;
+BEGIN
+    l_result := apex_error.init_error_result(p_error);
+
+    IF p_error.ora_sqlcode = -20001 THEN
+        l_result.message := REPLACE(p_error.message, 'ORA-20001: ', '');
+        l_result.display_location := apex_error.c_inline_in_notification;
+    END IF;
+
+    RETURN l_result;
+END;
