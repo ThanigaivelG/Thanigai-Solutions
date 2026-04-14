@@ -1,0 +1,11 @@
+Notifications Auto Dismissal (Page Load in Global Page)
+----------------------------
+
+apex.message.setThemeHooks({
+  beforeShow: function(pMsgType, pElement$) {
+    setTimeout(function() {
+      $('.t-Alert').fadeOut('slow');
+    }, 7000);
+  }
+});
+ 
