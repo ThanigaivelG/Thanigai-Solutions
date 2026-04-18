@@ -1,0 +1,33 @@
+Copy Interactive Report Column Values as Comma Seperated Value to the Clipboard
+=================================================================================
+
+
+HTML Expression (Icon)
+---------------
+<span class="fa fa-copy copy-icon" title="copy record" onclick="copyRecord(this)"></span> 
+
+==========================================================================================
+
+Function and Global Variable
+----------------------------
+
+function copyRecord(el) {
+  var row = $(el).closest('tr');
+  var values = [];
+
+  //Get the row values excluding the copy icon column
+  row.children('td').each(function () {
+    if ($(this).find('.copy-icon').length === 0) {
+      values.push(this.innerText.trim());
+    } 
+  }); 
+
+  // Copy the contents to the clipboard
+  var record = values.join(",");
+  if(record != ""){         
+    navigator.clipboard.writeText(record);
+    apex.message.showPageSuccess("Copied");
+  }      
+}
+
+==========================================================================================
