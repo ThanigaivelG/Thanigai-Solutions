@@ -1,0 +1,48 @@
+Mail - Event Detail Attachment (Add to Calendar)
+------------------------------
+
+declare
+  l_blob blob;
+  l_id number; 
+  l_retval     VARCHAR2 (32767);
+  v_name varchar2(180);
+  v_email varchar2(150);
+
+begin
+       l_retval :=    'BEGIN:VCALENDAR' || CHR(10) ||
+             'VERSION:2.0' || CHR(10) ||
+             'PRODID:-//Oracle APEX//EN' || CHR(10) ||
+             'BEGIN:VEVENT' || CHR(10) ||
+             'DTSTAMP:' || TO_CHAR(SYSDATE,'YYYYMMDD"T"HH24MISS') || CHR(10) ||
+             'DTSTART:' || TO_CHAR(TO_DATE('2026-04-27 08:30','YYYY-MM-DD HH24:MI'),'YYYYMMDD"T"HH24MISS') || CHR(10) ||
+             'DTEND:'   || TO_CHAR(TO_DATE('2026-04-27 16:30','YYYY-MM-DD HH24:MI'),'YYYYMMDD"T"HH24MISS') || CHR(10) ||
+             'SUMMARY:Event Remainder' || CHR(10) ||
+             'DESCRIPTION:Event Remainder - Email' || CHR(10) ||
+             'SEQUENCE:0' || CHR(10) ||
+             'END:VEVENT' || CHR(10) ||
+             'END:VCALENDAR';  
+
+       l_blob := UTL_RAW.cast_to_raw (l_retval);    
+  
+     v_name  := ''; -- Replace the name
+     v_email := ''; -- Replace with your email id
+        
+     BEGIN
+        l_id :=  APEX_MAIL.SEND (
+                   p_to        => v_email,
+                   p_from      => :APP_EMAIL,
+                   p_subj      => 'Remainder Notification',
+                   p_body      => 'Please add the event to your calendar',
+                   p_body_html => '<b>Please add the event to your calendar</b>'
+                );
+
+         apex_mail.add_attachment (p_mail_id         => l_id,       
+                                    p_attachment      => l_blob,       
+                                    p_filename        => 'EVENT.ics',   
+                                    p_mime_type       => 'application/hbs-ics'       
+                                   );   
+
+        APEX_MAIL.PUSH_QUEUE;  
+
+    END;
+end;
