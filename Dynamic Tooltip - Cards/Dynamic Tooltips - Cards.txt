@@ -1,0 +1,30 @@
+Dynamic Tooltip - Cards
+=======================
+
+select 11 as card_title , 'Tooltip : Card1' tooltip from dual
+union
+select 21 as card_title , 'Tooltip : Card2' tooltip from dual
+union
+select 31 as card_title , 'Tooltip : Card3' tooltip from dual
+
+
+=============================================================================================================
+
+Execute When Page Loads
+-----------------------
+
+document.querySelectorAll('.a-CardView-item').forEach(function(el) {
+    let data = el.getAttribute('data-id');
+
+    try {
+        let arr = JSON.parse(data);   // convert string to array
+        if (arr.length > 1) {
+            el.title = arr[1];        // second value
+            console.log(el.title)
+        }
+    } catch (e) {
+        console.error('Invalid data-id format', data);
+    }
+});
+
+=============================================================================================================
