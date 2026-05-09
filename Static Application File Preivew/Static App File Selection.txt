@@ -1,0 +1,80 @@
+Page item (Select list - Query Source)
+---------------------------------------
+
+select file_name, application_file_id 
+  from apex_application_static_files 
+ where APPLICATION_ID = :APP_ID  
+
+=====================================================
+
+
+Dynamic Action (Page Item Change)
+--------------
+
+if(apex.item("P93_APP_FILES").getValue().length > 0){ 
+    apex.server.process('Get Attachment',{
+            dataType: 'text',
+            async:false,         
+            pageItems: "#P93_APP_FILES"  
+        },{
+            success: function(empData) {            
+                let data = empData['output'][0] 
+                $("#file-preview").attr('src', 'data:'+ data['mime_type'] +';base64,' + data['Image'])   
+            },
+            error :function (err){
+            console.log(err)
+            }
+    }) 
+}
+else{
+    alert("Please, select any file..")
+     $("#file-preview").attr('src',"")
+}
+
+
+============================================================
+
+Static Content (Region)
+-----------------------
+
+<iframe id="file-preview" src="" style="width:100%;height:500px;" ></iframe>
+
+============================================================
+
+Ajax Callback
+-------------
+
+declare 
+  v_attachment_name varchar2(200);
+  v_attachment blob;
+  v_mime_type varchar2(100);
+
+  cursor file_ is 
+      select file_content, mime_type, file_name  
+          into v_attachment, v_mime_type, v_attachment_name
+        from apex_application_static_files 
+      where application_id = :APP_ID
+        and application_file_id = P93_APP_FILES; 
+  
+begin
+   
+apex_json.open_object; 
+  apex_json.open_array('output');  
+   if :P93_APP_FILES is not null then
+       for f in file_ loop    
+        apex_json.open_object;
+          apex_json.write('Image', f.file_content); 
+          apex_json.write('mime_type', f.MIME_TYPE); 
+        apex_json.close_object;  
+       end loop;  
+   else
+       apex_json.open_object;
+          apex_json.write('Image', ''); 
+          apex_json.write('mime_type', ''); 
+        apex_json.close_object;  
+   end if;       
+   apex_json.close_array;
+ apex_json.close_object;  
+end;  
+
+============================================================
