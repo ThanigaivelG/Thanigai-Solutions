@@ -1,0 +1,99 @@
+
+Hierarchy Report
+-----------------
+
+select DEPTNO,
+       DNAME,
+       LOC,
+    '<span class="show_child" data-emp="' || DEPTNO || '">➕</span>' AS details
+  from DEPT
+
+==============================================================================================
+
+HTML EXPRESSION (Details Column)
+
+<div class="column-action-btn" onclick="showDetail(this,'#DEPTNO#')">
+<span>#DETAILS#</span>
+</div>    
+
+==============================================================================================
+
+select EMPNO,
+       ENAME,
+       JOB,
+       MGR,      
+       SAL,       
+       DEPTNO
+  from EMP
+where deptno = :P98_DEPT_NO  
+
+
+STATIC ID / HTML DOM ID : RG_EMP
+
+==============================================================================================
+
+Inline CSS
+----------
+
+#RG_EMP{
+  display:none;
+}
+
+.column-action-btn{
+  cursor: pointer;
+}
+
+==============================================================================================
+
+Function and Global Variable Declaration
+----------------------------------------
+
+function showDetail(el, depno) {
+  $s('P98_DEPT_NO', depno);   
+
+    let btn = $(el);
+		let tr  = btn.closest("tr");         
+		 
+		if (tr.next().hasClass("detail_region")) {
+		  tr.next().find(".slide-box").stop(true,true).slideUp(500, "swing", function () {
+			tr.next().remove();
+		  });
+        
+		  return;
+		}
+          
+        // Close & Remove other open rows 
+        $(".detail_region").remove();
+
+     console.log(apex.item("P98_DEPT_NO").getValue())
+
+       apex.region("RG_EMP").refresh();
+
+       setTimeout(() => {
+
+        // Get content
+		let content = $("#RG_EMP").html();
+
+    console.log(content)
+ 
+		// Create row (content hidden initially)
+		let newRow = `
+		<tr class="detail_region">
+		  <td colspan="99">
+			<div class="slide-box" style="display:none;">
+			  ${content}
+			</div>
+		  </td>
+		</tr>
+		`; 
+        
+		 tr.after(newRow); 
+ 
+    setTimeout(function() { 
+            tr.next().find('.slide-box').stop(true,true).slideDown(500); 
+      }, 300); 
+
+         
+      }, 1000);
+
+==============================================================================================
