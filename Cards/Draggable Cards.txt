@@ -1,0 +1,111 @@
+Draggable Cards
+===============
+
+Card Source
+-----------
+
+SELECT
+    pay_element_id,
+    element_code,
+    element_name,
+    calculation_type,
+    priority_no
+FROM hr_pay_elements
+WHERE element_type = 'DEDUCTION'
+  AND active_flag = 'Y'
+ORDER BY PRIORITY_NO;
+
+===================================================================================
+
+HTML DOM ID (26.1) / Static ID (in 24.2)
+------------------------------------------
+
+my_draggable_cards
+
+===================================================================================
+File URL
+--------
+
+Sortable JS Library CDN URL
+---------------------------
+
+https://cdn.jsdelivr.net/npm/sortablejs@1.15.0/Sortable.min.js
+
+===================================================================================
+
+Function and Global Variable Declaration
+-----------------------------------------
+
+var orders = []
+
+===================================================================================
+
+Execute when page loads
+-----------------------
+
+var el = document.querySelector('#my_draggable_cards .a-CardView-items'); //Cards Static ID
+
+var sortable = Sortable.create(el, {
+    animation: 150,
+    ghostClass: 'u-colors-gray-1',
+    onEnd: function (evt) {        
+        orders = [];
+        document.querySelectorAll('#my_draggable_cards .a-CardView-item').forEach(function(card) {
+            var id = card.getAttribute('data-id');
+            if (id) { orders.push(id); }
+        }); 
+ 
+    }
+});
+
+===================================================================================
+
+Save Button Click - Dynamic Action
+-----------------------------------
+
+  var lWait = apex.util.showSpinner();
+ 
+  apex.server.process('SAVE_PRIORITY', {
+      f01: orders 
+  }, {
+      success: function(pData) {
+          lWait.remove();
+          apex.message.showPageSuccess("Pay Element Deduction Priority saved successfully!");
+          setTimeout(function() {
+              apex.message.hidePageSuccess();
+          }, 2000);
+      },
+      error: function(request, status, error) {
+          lWait.remove();
+          apex.message.showErrors([{
+              type:       "error",
+              location:   "page",
+              message:    "Error saving Card order: " + error,
+              unsafe:     false
+          }]);
+      }
+  });
+
+===================================================================================
+
+AJAX Callback (SAVE_PRIORITY)
+------------- 
+
+begin
+    for i in 1 .. apex_application.g_f01.count loop
+       update hr_pay_elements 
+         set PRIORITY_NO = i
+       where PAY_ELEMENT_ID = apex_application.g_f01(i);  
+    end loop;
+
+    apex_json.open_object;
+    apex_json.write('status', 'success');
+    apex_json.close_object;
+exception
+    when others then
+        apex_json.open_object;
+        apex_json.write('status', 'error');
+        apex_json.close_object;
+end;
+
+===================================================================================
