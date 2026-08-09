@@ -1,0 +1,108 @@
+Role Based Access (Authorisation)
+==================================
+
+
+Roles
+----- 
+
+CLARK - 10 (HR)
+
+FORD - 20 (Finance)
+
+=============================================================================================
+
+Authorisation
+-------------
+
+select * from emp where deptno = 10 and ename = upper(:APP_USER) -- HR 
+
+select * from emp where deptno = 20 and ename = upper(:APP_USER) -- Finance
+
+=============================================================================================
+
+Card HR SQL Source
+-------------------
+
+SELECT id,
+    option_name AS card_title,
+    option_description AS card_subtitle,
+    icon_url AS card_image,
+    '#' AS target_url
+FROM ( 
+    SELECT  1 id,
+           'Employee Management' option_name,
+           'Manage employee information' option_description,
+           'https://img.icons8.com/color/96/conference-call.png' icon_url
+    FROM dual
+
+    UNION ALL
+
+    SELECT 2,
+           'Leave Management',
+           'Manage employee leave and holidays',
+           'https://img.icons8.com/color/96/calendar.png'
+    FROM dual
+
+    UNION ALL
+
+    SELECT 3,
+           'Attendance',
+           'Track employee attendance',
+           'https://img.icons8.com/color/96/time-card.png'
+    FROM dual
+
+    UNION ALL
+
+    SELECT 4,
+           'Payroll',
+           'Manage employee payroll information',
+           'https://img.icons8.com/color/96/payroll.png'
+    FROM dual
+);
+
+
+=============================================================================================
+ 
+Card Finance SQL Source
+-------------------
+
+SELECT
+    option_name AS card_title,
+    option_description AS card_subtitle,
+    icon_url AS card_image,
+    '#' AS target_url
+FROM (
+    SELECT  1 id,
+           'Accounts Payable' option_name,
+           'Manage supplier invoices and payments' option_description,
+           'https://img.icons8.com/color/96/money-bag.png' icon_url
+    FROM dual
+
+    UNION ALL
+
+    SELECT 2,
+           'Accounts Receivable',
+           'Manage customer invoices and collections',
+           'https://img.icons8.com/color/96/receive-cash.png'
+    FROM dual
+
+    UNION ALL
+
+    SELECT 3,
+           'General Ledger',
+           'Manage financial transactions and accounts',
+           'https://img.icons8.com/color/96/ledger.png'
+    FROM dual
+
+    UNION ALL
+
+    SELECT 4,
+           'Financial Reports',
+           'View financial statements and reports',
+           'https://img.icons8.com/color/96/combo-chart--v1.png'
+    FROM dual
+
+ 
+);
+
+=============================================================================================
