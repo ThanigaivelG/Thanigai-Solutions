@@ -1,0 +1,24 @@
+1) Interactive Report Enhancements
+
+-> Multiple values filter support (We can select multiple columns values on column header)
+
+-> For Numeric Columns - Min and Max fields will be shown for filtering in the column header
+
+-> For Dates Columns - Custom Date Picker is given for selecting the range of dates.
+
+-> Key phrase search can be performed for the common actions like filter, search, sort, hide / show etc. without using the LLM (AI Model)
+
+
+Key Phrases
+------------
+
+filter %columnName by %value
+search %columnName for %value
+sort by %columnName descending
+break on %columnName 
+hide %columnName
+show %columnName
+reset
+
+eg: filter designation by MANAGER
+ 
