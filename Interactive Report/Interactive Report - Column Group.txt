@@ -1,0 +1,211 @@
+Interactive Report -> Column Group
+=============================
+
+Report SQL Query
+----------------
+
+select 'John' employee_name,
+       100 sales_jan,
+       120 sales_feb,
+       140 sales_mar,
+       50  expense_jan,
+       60  expense_feb,
+       70  expense_mar       
+from dual
+
+union all
+
+select 'Mary' employee_name,
+       150 sales_jan,
+       180 sales_feb,
+       210 sales_mar,
+       70  expense_jan,
+       80  expense_feb,
+       90  expense_mar
+  from dual
+
+====================================================================================================
+
+Report Static ID / HTML DOM ID : RG_IR_RPT
+
+====================================================================================================
+
+Execute When Page Loads
+-----------------------
+
+createColumnGroupsIR("RG_IR_RPT")
+
+====================================================================================================
+
+Function and Global Variable Declaration
+----------------------------------------
+
+function createColumnGroupsIR(regionId) {
+
+    const region = document.getElementById(regionId);
+
+    if (!region) {
+        console.log("Region not found:", regionId);
+        return;
+    }
+
+    /*
+     * Find the Interactive Report table.
+     */
+    const tbl = region.querySelector(`#${regionId}_ir`);
+
+    if (!tbl) {
+        console.log("Interactive Report table not found:", `${regionId}_ir`);
+        return;
+    }
+
+    /*
+     * Find the data panel.
+     */
+    const dataContainer = tbl.querySelector(`#${regionId}_data_panel`);
+
+    if (!dataContainer) {
+        console.log("Data panel not found:", `${regionId}_data_panel`);
+        return;
+    }
+
+    /*
+     * Find the fixed header container.
+     */
+    const thead = dataContainer.querySelector(".t-fht-thead");
+
+    if (!thead) {
+        console.log("Header container not found");
+        return;
+    }
+
+    /*
+     * Find the header table.
+     */
+    const headerTable = thead.querySelector("table");
+
+    if (!headerTable) {
+        console.log("Header table not found");
+        return;
+    }
+
+    /*
+     * Remove previously generated group row.
+     */
+    const existingGroupRow =
+        headerTable.querySelector(".dynamic-column-group-row");
+
+    if (existingGroupRow) {
+        existingGroupRow.remove();
+    }
+
+    /*
+     * Get the normal APEX header row.
+     */
+    const headerRow = headerTable.querySelector("tr");
+
+    if (!headerRow) {
+        console.log("Header row not found");
+        return;
+    }
+
+    /*
+     * Get all header cells.
+     */
+    const headers = Array.from(
+        headerRow.querySelectorAll("th")
+    );
+
+    if (!headers.length) {
+        console.log("No header cells found");
+        return;
+    }
+
+    /*
+     * Create the new group row.
+     */
+    const groupRow = document.createElement("tr");
+
+    groupRow.className = "dynamic-column-group-row";
+
+    let currentGroup = null;
+    let currentGroupCell = null;
+
+    headers.forEach(function (th) {
+
+        /*
+         * Get the displayed heading.
+         *
+         * Example:
+         * Sales|Jan
+         * Sales|Feb
+         * Expense|Jan
+         */
+        const headingText = th.textContent.trim();
+
+        const separatorIndex = headingText.indexOf("|");
+ 
+        if (separatorIndex === -1) {
+
+            const groupCell = document.createElement("th");
+
+            groupCell.className = "a-IRR-header";
+            groupCell.textContent = "";
+
+            groupRow.appendChild(groupCell);
+
+            return;
+        }
+
+        const groupName =
+            headingText.substring(0, separatorIndex).trim();
+
+        const columnName =
+            headingText.substring(separatorIndex + 1).trim();
+
+        /*
+         * Replace the displayed heading with only
+         * the child column name.
+         */
+        const headingElement = th.querySelector("a, span");
+
+        if (headingElement) {
+            headingElement.textContent = columnName;
+        } else {
+            th.textContent = columnName;
+        }
+
+        /*
+         * Same group as previous column.
+         */
+        if (currentGroup === groupName) {
+
+            currentGroupCell.colSpan++;
+
+        } else {
+
+            /*
+             * New group.
+             */
+            currentGroup = groupName;
+
+            currentGroupCell = document.createElement("th");
+
+            currentGroupCell.className = "a-IRR-header";
+            currentGroupCell.textContent = groupName;
+            currentGroupCell.colSpan = 1;
+
+            groupRow.appendChild(currentGroupCell);
+        }
+    });
+
+    
+    headerRow.parentNode.insertBefore(
+        groupRow,
+        headerRow
+    );
+
+ 
+}
+
+====================================================================================================
