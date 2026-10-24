@@ -1,0 +1,50 @@
+Google SSO in APEX
+==================
+
+Google Developers Console:
+--------------------------
+
+https://console.developers.google.com/
+
+Create Project & Oauth Client ID
+
+Get the Client ID & Passowrd 
+
+APEX URI Path URL: 
+------------------
+https://oracleapex.com/ords/apex_authentication.callback
+
+
+===========================================================================================
+
+APEX Workspace -> Web Credentials
+
+Create the Webcredentials with the Secret ID and Password (Basic Authentication)
+
+=============================================================================================
+
+Authentication
+--------------
+
+Create the Authentication Scheme in the APEX Application (Social Sign-in)
+
+
+scope : openid email profile
+
+UserName : #email#
+
+Additional User Attributes : email, name, picture
+
+Under Login Processing:
+-----------------------
+Switch in Session -> Enabled
+
+
+=============================================================================================
+In Login Page, Create one button with redirect to Home Page 
+
+Redirect to home page with Request:
+APEX_AUTHENTICATION=AUTHENTICATION SCHEME NAME
+
+eg: APEX_AUTHENTICATION=GOOGLE_SSO
+=============================================================================================
