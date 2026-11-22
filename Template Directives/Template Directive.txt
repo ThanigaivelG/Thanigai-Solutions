@@ -1,0 +1,200 @@
+Template Directive
+==================
+
+Case Statement
+--------------
+
+SQL QUERY
+---------
+
+SELECT 1 AS product_id, 'Laptop Pro 15' AS name, 'Active' AS status
+UNION ALL
+SELECT 2, 'Wireless Mouse', 'Active'
+UNION ALL
+SELECT 3, 'Mechanical Keyboard', 'Inactive'
+UNION ALL
+SELECT 4, 'USB-C Hub', 'Active'
+UNION ALL
+SELECT 5, 'Gaming Monitor 27"', 'Cancelled'
+UNION ALL
+SELECT 6, 'External SSD 1TB', 'Active'
+UNION ALL
+SELECT 7, 'Bluetooth Headphones', 'Inactive'
+UNION ALL
+SELECT 8, 'Webcam HD', 'Unknown'
+UNION ALL
+SELECT 9, 'Portable Charger', 'Active'
+UNION ALL
+SELECT 10, 'Smartphone Stand', 'Cancelled'
+order by 1
+
+HTML EXPRESSION
+---------------
+<span class="
+    {case STATUS/}
+      {when Active/}
+         os-badge os-badge--success
+      {when Inactive/}   
+         os-badge os-badge--warning
+      {when Cancelled/}   
+         os-badge os-badge--danger
+      {otherwise/}
+         os-badge os-badge--muted
+      {endcase/} 
+      ">#STATUS#</span>
+
+=========================================================================================
+
+If Statement
+------------
+
+SQL Query
+---------
+SELECT 1 AS document_id, 'Policy Document' AS document_name, 'Y' AS can_edit
+UNION ALL
+SELECT 2, 'Invoice', 'N'
+UNION ALL
+SELECT 3, 'Premium Receipt', 'N'
+UNION ALL
+SELECT 4, 'Policy Endorsement', 'Y'
+UNION ALL
+SELECT 5, 'Claim Form', 'N'
+UNION ALL
+SELECT 6, 'Policy Schedule', 'Y'
+UNION ALL
+SELECT 7, 'Payment Receipt', 'N'
+UNION ALL
+SELECT 8, 'Policy Amendment', 'Y'
+UNION ALL
+SELECT 9, 'Tax Certificate', 'N'
+UNION ALL
+SELECT 10, 'Policy Renewal Notice', 'Y';
+
+HTML EXPRESSION
+---------------
+{if CAN_EDIT/}
+  <a class="os-link" href="#">Edit</a> 
+{else/}
+  <span class="os-empty">View Only</span>
+{endif/} 
+
+=========================================================================================
+
+Loops
+------
+
+SQL Query
+---------
+SELECT 1 AS technology_id, 'Oracle APEX' AS technology_name, 'SQL, PLSQL, HTML, CSS, JavaScript' AS skills_required, 'Web Application Development' AS domain
+UNION ALL
+SELECT 2, 'Java Spring Boot', 'Java, Spring Boot, REST API, Hibernate, Maven', 'Backend Development'
+UNION ALL
+SELECT 3, 'React JS', 'JavaScript, React, HTML, CSS, Redux', 'Frontend Development'
+UNION ALL
+SELECT 4, 'Python Django', 'Python, Django, REST API, PostgreSQL', 'Web Application Development'
+UNION ALL
+SELECT 5, 'Node.js', 'JavaScript, Node.js, Express, REST API', 'Backend Development'
+UNION ALL
+SELECT 6, 'Power BI', 'DAX, Data Modeling, SQL, Power Query', 'Business Intelligence'
+UNION ALL
+SELECT 7, 'Salesforce', 'Apex, Lightning Components, SOQL', 'CRM Development'
+UNION ALL
+SELECT 8, 'Android Development', 'Java, Kotlin, Android SDK', 'Mobile Application Development'
+UNION ALL
+SELECT 9, 'Flutter', 'Dart, Flutter SDK, REST API', 'Mobile Application Development'
+UNION ALL
+SELECT 10, 'Tableau', 'Data Visualization, SQL, Dashboard Design', 'Business Intelligence';
+
+HTML EXPRESSION
+---------------
+{loop "," SKILLS_REQUIRED/}
+  <span class="os-tag">&APEX$ITEM.</span>
+{endloop/} 
+
+=========================================================================================
+
+Loops with If Statement
+-----------------------
+
+SQL QUERY
+---------
+
+SELECT 601 AS id, 'Payment Processing' AS name, 'Critical, Finance, APEX' AS tags, 'Billing' AS module, 'Amit' AS assigned_to, '1/25/2026' AS created_date
+UNION ALL
+SELECT 602, 'User Audit Log', 'Internal, Security', 'Compliance', 'Neha', '1/26/2026'
+UNION ALL
+SELECT 603, 'UI Enhancements', 'UI, Design', 'Frontend', 'Rohit', '1/27/2026'
+UNION ALL
+SELECT 604, 'MFA Rollout', 'Critical, Security, Internal', 'Authentication', 'Pooja', '1/28/2026'
+UNION ALL
+SELECT 605, 'API Refactor', 'REST, ORDS', 'Integration', 'Suresh', '1/29/2026';
+
+HTML EXPRESSION
+---------------
+
+{loop "," TAGS/}
+   
+   {case APEX$ITEM/}
+      {when Critical/}
+         <span class="os-badge os-badge--danger">&APEX$ITEM.</span>
+      {when Internal/}
+         <span class="os-badge os-badge--warning">&APEX$ITEM.</span> 
+      {otherwise/}
+          <span class="os-tag">&APEX$ITEM.</span> 
+   {endcase /}
+
+{endloop/}
+ 
+==============================================================================================
+
+CSS
+---
+/* ===== Status Badges ===== */
+.os-badge {
+  display: inline-block;
+  padding: 0.25rem 0.6rem;
+  border-radius: 12px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  line-height: 1;
+  white-space: nowrap;
+}
+
+.os-badge--success { background: #e6f4ea; color: #137333; }
+.os-badge--warning { background: #fef7e0; color: #8a6d1d; }
+.os-badge--danger  { background: #fdecea; color: #a50e0e; }
+.os-badge--info    { background: #e8f0fe; color: #1a73e8; }
+.os-badge--muted   { background: #f1f3f4; color: #5f6368; }
+
+/* ===== Action Links ===== */
+.os-link {
+  color: #1a73e8;
+  text-decoration: none;
+  font-weight: 500;
+}
+.os-link:hover {
+  text-decoration: underline;
+}
+
+/* ===== Empty State ===== */
+.os-empty {
+  color: #757575;
+  font-style: italic;
+}
+
+/* ===== Tags ===== */
+.os-tag {
+  display: inline-block;
+  margin: 0 4px 4px 0;
+  padding: 0.2rem 0.5rem;
+  border-radius: 10px;
+  font-size: 0.7rem;
+  background: #f1f3f4;
+  color: #3c4043;
+}
+
+/* ===== Priority Accents ===== */
+.os-priority-high   { border-left: 4px solid #d93025; padding-left: 6px; }
+.os-priority-medium { border-left: 4px solid #f9ab00; padding-left: 6px; }
+.os-priority-low    { border-left: 4px solid #188038; padding-left: 6px; }
+ 
